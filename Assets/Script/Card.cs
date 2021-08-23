@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour
+public class Card : MonoBehaviour, IPointerClickHandler
 {
     public class Data
     {
@@ -93,11 +94,45 @@ public class Card : MonoBehaviour
         {
             numberText.text = Number.ToString();
         }
+
+        var optionalNumberObj = transform.Find("OptionalNumberText");
+        optionalNumberObj.gameObject.SetActive(!IsReverse && Number == 1);
+        if (Number == 1)
+        {
+            var optionalNumberText = optionalNumberObj.GetComponent<Text>();
+            optionalNumberText.text = UseNumber.ToString();
+        }
     }
 
     private void OnValidate()
     {
         SetCard(Number, CurrentMark, IsReverse);
+    }
+
+
+    public bool IsLarge = false;
+    public int UseNumber
+    {
+        get
+        {
+            if (Number > 10) return 10;
+            if (Number == 1)
+            {
+                return IsLarge ? 11 : 1;
+            }
+            return Number;
+        }
+    }
+
+    //1と11の切り替え
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (Number == 1)
+        {
+            
+            IsLarge = !IsLarge;
+            SetCard(Number, CurrentMark, IsReverse);
+        }
     }
 
 }
